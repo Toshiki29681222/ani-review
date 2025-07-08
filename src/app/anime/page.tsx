@@ -1,3 +1,9 @@
+import AnimeCard from "./components/AnimeCard";
+
 export default function Anime() {
-  return <div>Anime</div>;
+  return (
+    <div>
+      <AnimeCard />
+    </div>
+  );
 }
