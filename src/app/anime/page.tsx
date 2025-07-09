@@ -1,9 +1,9 @@
-import AnimeCard from "./components/AnimeCard";
+import AnimeGrid from "./components/AnimeGrid";
 
 export default function Anime() {
   return (
     <div>
-      <AnimeCard />
+      <AnimeGrid />
     </div>
   );
 }
