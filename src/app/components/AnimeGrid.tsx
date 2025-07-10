@@ -1,4 +1,7 @@
-import AnimeCard from "./AnimeCard";
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
 
 type Anime = {
   id: number;
@@ -9,6 +12,7 @@ type Anime = {
 export default function AnimeGrid({ animeList }: { animeList: Anime[] }) {
   return (
     <section className="space-y-6">
+      {/* ソート選択 */}
       <div className="flex justify-end">
         <select
           name="sort"
@@ -21,9 +25,30 @@ export default function AnimeGrid({ animeList }: { animeList: Anime[] }) {
         </select>
       </div>
 
+      {/* アニメグリッド */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {animeList.map((anime) => (
-          <AnimeCard key={anime.id} anime={anime} />
+          <Link
+            key={anime.id}
+            href={`/anime/${anime.id}`}
+            className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition"
+          >
+            <Image
+              src={anime.coverImage?.large || ""}
+              alt={anime.title?.romaji || "no-title"}
+              width={300}
+              height={400}
+              className="w-full object-cover aspect-[3/4]"
+            />
+            <div className="p-4 space-y-1">
+              <h3 className="font-semibold text-base text-gray-800 line-clamp-1">
+                {anime.title?.romaji}
+              </h3>
+              <p className="text-sm text-gray-500 line-clamp-1">
+                {anime.title?.native}
+              </p>
+            </div>
+          </Link>
         ))}
       </div>
     </section>

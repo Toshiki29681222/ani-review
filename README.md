@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+以下は、あなたがこれまで構築してきた**アニメレビューアプリ**の内容を踏まえた、わかりやすく整った `README.md` のテンプレートです。
+今後の開発にあわせて随時アップデートできる構成になっています。
 
-## Getting Started
+---
 
-First, run the development server:
+## 📘 Anime Review Log（アニメ感想ログ）
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+アニメの感想や評価を自分のために記録できる、**内向型・インドア派向けのシンプルなレビューアプリ**です。
+作品ごと、エピソードごとに感想やタグを付けて管理できます。
+
+---
+
+### 🖼️ デモ画像（例）
+
+※ここにスクリーンショットを追加するとよいです。
+
+---
+
+## 🚀 機能一覧
+
+- 🔍 アニメ作品の検索（Anilist API を使用）
+- 📄 アニメ作品一覧の表示（人気順など）
+- 📝 各アニメに対してレビュー投稿・閲覧
+- 🏷️ タグによる分類と感想のグループ化
+- ❤️ お気に入り管理機能（予定）
+- 🌙 ダークモード対応（Tailwind CSS）
+
+---
+
+## 🛠 技術スタック
+
+| 項目                 | 使用技術                                    |
+| -------------------- | ------------------------------------------- |
+| フロントエンド       | Next.js 14（App Router）                    |
+| スタイリング         | Tailwind CSS                                |
+| 状態管理（予定）     | React Context / Zustand（想定）             |
+| API 連携             | Anilist GraphQL API（外部アニメデータ取得） |
+| アイコン             | Lucide Icons                                |
+| デプロイ環境（予定） | Vercel / Netlify                            |
+
+---
+
+## 🧱 ディレクトリ構成（抜粋）
+
+```txt
+.
+├── app/
+│   ├── anime/            # アニメ一覧ページ
+│   ├── layout.tsx        # ルートレイアウト
+│   ├── page.tsx          # ホーム画面
+│
+├── components/
+│   ├── Header.tsx        # ヘッダー
+│   ├── Footer.tsx        # フッター
+│   ├── AnimeGrid.tsx     # アニメ一覧グリッド
+│   ├── AnimeCard.tsx     # 各アニメカード
+│   ├── SearchBar.tsx     # タイトル検索バー
+│
+├── styles/
+│   └── globals.css       # グローバルスタイル（Tailwindベース）
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔧 セットアップ方法
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **リポジトリをクローン**
 
-## Learn More
+   ```bash
+   git clone https://github.com/your-username/anime-review-log.git
+   cd anime-review-log
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **依存関係をインストール**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. **開発サーバを起動**
 
-## Deploy on Vercel
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **ブラウザでアクセス**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```
+   http://localhost:3000
+   ```
+
+---
+
+## 🔌 外部 API について
+
+このアプリでは、以下の API からアニメ情報を取得しています：
+
+- [Anilist GraphQL API](https://anilist.gitbook.io/anilist-apiv2-docs/)
+
+  - スタジオ単位（例：京都アニメーション）でアニメ取得可能
+  - タイトル・カバー画像・放送開始年などを取得
+
+- 今後追加予定：
+
+  - TMDB から話数ごとのサムネイル取得（予定）
+
+---
+
+## 🎯 今後の予定（ToDo）
+
+- [ ] アニメに対するエピソードの自動取得・表示
+- [ ] ユーザーによるレビュー投稿・編集機能
+- [ ] タグ機能とフィルタリング
+- [ ] AI 検索：気分やジャンルからアニメ提案
+- [ ] お気に入り管理
+- [ ] ダークモード切替（Tailwind ベース）
+
+---
+
+## 📄 ライセンス
+
+MIT License
+
+---
+
+## 🙋‍♀️ 制作意図
+
+「アニメの感想を、SNS ではなく**自分のためだけに**残したい」
+そんなインドア派のあなたのための、落ち着いたデザインとシンプルな使い心地を目指しています。
+
+---
+
+必要に応じて以下も追加可能です：
+
+- `.env.example`（API キーなど必要な場合）
+- デプロイ方法（Vercel にそのまま `main` ブランチをデプロイ可能）
+- 使用フォントやアイコンライブラリの詳細
+
+---
+
+ご希望があれば、この `README.md` をそのままファイル化（`.md`）してお渡しもできます。どうしますか？

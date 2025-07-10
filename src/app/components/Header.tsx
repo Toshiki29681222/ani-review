@@ -1,66 +1,61 @@
-// components/Header.tsx
 "use client";
 
-import {
-  Box,
-  Flex,
-  HStack,
-  IconButton,
-  Button,
-  useDisclosure,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { useState } from "react";
 import Link from "next/link";
+import { Menu, X } from "lucide-react"; // アイコンを使う場合
 
-const Links = [
+const navLinks = [
   { label: "ホーム", href: "/" },
   { label: "アニメ一覧", href: "/anime" },
   { label: "お気に入り", href: "/favorites" },
 ];
 
-const NavLink = ({ label, href }: { label: string; href: string }) => (
-  <Link href={href}>
-    <Button variant="ghost" size="sm">
-      {label}
-    </Button>
-  </Link>
-);
-
 export default function Header() {
-  const { open, onOpen, onClose } = useDisclosure();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <Box bg="gray.100" px={4} shadow="md">
-      <Flex h={16} alignItems="center" justifyContent="space-between">
-        <IconButton
-          size="md"
+    <header className="bg-gray-100 shadow-md">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        {/* ロゴ */}
+        <div className="text-lg font-bold">アニメ感想ログ</div>
+
+        {/* ハンバーガーアイコン（モバイル） */}
+        <button
+          className="md:hidden"
+          onClick={() => setMenuOpen(!menuOpen)}
           aria-label="メニューを開く"
-          display={{ md: "none" }}
-          onClick={open ? onClose : onOpen}
-        />
+        >
+          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
 
-        <HStack alignItems="center">
-          <Text fontWeight="bold" fontSize="lg">
-            アニメ感想ログ
-          </Text>
-          <HStack as="nav" display={{ base: "none", md: "flex" }}>
-            {Links.map((link) => (
-              <NavLink key={link.href} {...link} />
-            ))}
-          </HStack>
-        </HStack>
-      </Flex>
+        {/* ナビゲーション（PC表示） */}
+        <nav className="hidden md:flex space-x-4">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm hover:underline"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
-      {open ? (
-        <Box pb={4} display={{ md: "none" }}>
-          <Stack as="nav">
-            {Links.map((link) => (
-              <NavLink key={link.href} {...link} />
-            ))}
-          </Stack>
-        </Box>
-      ) : null}
-    </Box>
+      {/* モバイル用メニュー */}
+      {menuOpen && (
+        <nav className="md:hidden px-4 pb-4 space-y-2">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="block text-sm hover:underline"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+    </header>
   );
 }
