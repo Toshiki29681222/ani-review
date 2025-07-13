@@ -1,18 +1,55 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var graphql_1 = require("graphql");
-var schema = (0, graphql_1.buildSchema)("\n  type Query {\n    hello: String\n  }\n");
-// The rootValue provides a resolver function for each API endpoint
-var rootValue = {
-    hello: function () {
-        return "Hello world!";
-    },
+// Here we define our query as a multi-line string
+// Storing it in a separate .graphql/.gql file is also possible
+const query = `
+query {
+  Page(perPage: 10) {
+    media(sort: [TRENDING_DESC], type: ANIME) {
+      id
+      title {
+        romaji
+        english
+      }
+      trending
+      popularity
+    }
+  }
+}
+
+`;
+
+// Define our query variables and values that will be used in the query request
+const variables = {
+  id: 15125,
 };
-// Run the GraphQL query '{ hello }' and print out the response
-(0, graphql_1.graphql)({
-    schema: schema,
-    source: "{ hello }",
-    rootValue: rootValue,
-}).then(function (response) {
-    console.log(response);
-});
+
+// Define the config we'll need for our Api request
+const url = "https://graphql.anilist.co",
+  options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query: query,
+      variables: variables,
+    }),
+  };
+
+// Make the HTTP Api request
+fetch(url, options).then(handleResponse).then(handleData).catch(handleError);
+
+function handleResponse(response) {
+  return response.json().then(function (json) {
+    return response.ok ? json : Promise.reject(json);
+  });
+}
+
+function handleData(data) {
+  console.log(JSON.stringify(data, null, 2));
+}
+
+function handleError(error) {
+  alert("Error, check console");
+  console.error(error);
+}
