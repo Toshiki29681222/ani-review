@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import EpisodeList from "@/app/components/EpisodeList";
+import EpisodeList from "@/components/EpisodeList";
 
 type Episode = {
   id: number;

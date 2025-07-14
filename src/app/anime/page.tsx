@@ -18,7 +18,7 @@ export default function Anime() {
     const fetchAnimeData = async () => {
       const query = `
         query {
-          seasonal: Page(perPage: 12) {
+          seasonal: Page(perPage: 10) {
             media(season: SUMMER, seasonYear: 2025, type: ANIME, sort: POPULARITY_DESC) {
               id
               title {
@@ -30,7 +30,7 @@ export default function Anime() {
               }
             }
           }
-          popular: Page(perPage: 12) {
+          popular: Page(perPage: 10) {
             media(sort: POPULARITY_DESC, type: ANIME) {
               id
               title {
