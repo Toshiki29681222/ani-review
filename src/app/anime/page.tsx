@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import FavoriteButton from "@/components/FavoriteButton";
 
 type Anime = {
   id: number;
@@ -97,15 +98,13 @@ export default function Anime() {
                   sizes="200px"
                 />
               </div>
-              <div className="p-3 space-y-1">
-                <h3 className="font-semibold text-sm text-gray-800 line-clamp-1">
-                  {anime.title.romaji}
-                </h3>
-                <p className="text-xs text-gray-500 line-clamp-1">
-                  {anime.title.native}
-                </p>
-              </div>
             </Link>
+            <div className="flex justify-between p-3 space-y-1 h-20">
+              <h3 className="font-semibold text-sm text-gray-800 line-clamp-1 pt-1">
+                {anime.title.native}
+              </h3>
+              <FavoriteButton />
+            </div>
           </li>
         ))}
       </ul>
