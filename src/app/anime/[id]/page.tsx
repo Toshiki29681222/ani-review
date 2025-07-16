@@ -80,9 +80,10 @@ async function getAnnictData(title: string): Promise<{
 export default async function AnimeDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const anime = await getAnimeDetail(params.id);
+  const { id } = await params;
+  const anime = await getAnimeDetail(id);
   if (!anime) return notFound();
 
   const annictData = await getAnnictData(anime.title.native);
