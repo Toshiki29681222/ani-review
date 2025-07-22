@@ -1,20 +1,15 @@
-// Here we define our query as a multi-line string
-// Storing it in a separate .graphql/.gql file is also possible
-const query = `
-query {
-  Page(perPage: 10) {
-    media(sort: [TRENDING_DESC], type: ANIME) {
-      id
-      title {
-        romaji
-        english
-      }
-      trending
-      popularity
+// クエリ作成
+// 変数idを使って、特定のアニメの情報を取得するGraphQLクエリを作成します。
+
+var query = `
+query ($id: Int) {
+  Media (id: $id){
+    id
+    title {
+      romaji
     }
   }
 }
-
 `;
 
 // Define our query variables and values that will be used in the query request

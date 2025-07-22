@@ -12,127 +12,51 @@ Anilist は、アニメ・マンガなどのデータを提供しているサー
 
 ---
 
-## データを取得してみる
+##　クエリの構造　一部抜粋
+Root Query
+Media
+id(引数)
+title
+romaji(列)
 
-GraphQL は、以下のように\*\*クエリ（query）文字列と変数（variables）\*\*を組み合わせて、HTTP POST でサーバーに送信することでデータを取得します。
+## アニメデータを取得してみる
+
+GraphQL は、以下のようにクエリ（query）文字列と変数（variables）を組み合わせて、HTTP POST でサーバーに送信することでデータを取得します。
+
+body には以下を追加します
 
 ```
-var query = `
+{
+      query: `
 query ($id: Int) {
-  Media (id: $id, type: ANIME){
+  Media (id: $id){
     id
     title {
       romaji
-      english
-      native
     }
   }
 }
-`;
+`,
+      variables: {id: 15125},
+    }
 ```
 
----
+以下のようにデータが返ってきます。
 
-## 💻 TypeScript で Anilist にクエリを送るコード
-
-以下は、`fetch` を使って TypeScript（JS 互換）で Anilist API にクエリを送る基本的なコードです。
-
-```ts
-type MediaTitle = {
-  romaji: string;
-  english?: string;
-  native: string;
-};
-
-type Media = {
-  id: number;
-  title: MediaTitle;
-};
-
-type GraphQLResponse<T> = {
-  data?: T;
-  errors?: { message: string }[];
-};
-
-type MediaQueryResult = {
-  Media: Media;
-};
-
-const query = `
-  query ($id: Int) {
-    Media(id: $id, type: ANIME) {
-      id
-      title {
-        romaji
-        english
-        native
+```
+{
+  "data": {
+    "Media": {
+      "id": 15125,
+      "title": {
+        "romaji": "Teekyuu"
       }
     }
   }
-`;
-
-const variables = {
-  id: 15125,
-};
-
-fetch("https://graphql.anilist.co", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
-  body: JSON.stringify({ query, variables }),
-})
-  .then(async (response) => {
-    const json: GraphQLResponse<MediaQueryResult> = await response.json();
-    if (!response.ok || json.errors) {
-      throw json.errors ?? new Error("Unknown GraphQL error");
-    }
-    return json.data;
-  })
-  .then((data) => {
-    console.log("Media:", data?.Media.title.romaji);
-  })
-  .catch((error) => {
-    console.error("GraphQL Error:", error);
-  });
-```
-
----
-
-## 📦 アプリが大きくなると出てくる課題
-
-この方法でも十分に動作しますが、開発が進んでクエリが増えると、**毎回レスポンス型を手書きするのが大変**になります。
-
----
-
-## ✅ Apollo Client + Codegen の活用
-
-Anilist API は GraphQL スキーマが提供されているため、**GraphQL Code Generator**を使って、クエリから型を自動生成できます。
-
-また、**Apollo Client**を使えば以下のようなメリットも得られます：
-
-- 自動的に型付きのクエリ Hooks を生成
-- キャッシュやリトライなどの便利機能が標準搭載
-- 保守性・拡張性が高い
-
----
-
-## 🔧 例：Apollo + Codegen 構成（準備中）
-
-```ts
-// クエリ
-query GetMedia($id: Int!) {
-  Media(id: $id, type: ANIME) {
-    id
-    title {
-      romaji
-    }
-  }
 }
 ```
 
-> ※ クエリファイル（`.graphql`）と `codegen.yml` を使って自動生成する流れについては、別記事で紹介予定です。
+---
 
 ---
 
