@@ -86,7 +86,9 @@ export default function Anime() {
         {animeList.map((anime) => (
           <li key={anime.id}>
             <Link
-              href={`/anime/${anime.id}`}
+              href={`/anime/${anime.id}?img=${encodeURIComponent(
+                anime.coverImage.large
+              )}`}
               className="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition w-[200px] block"
             >
               <div className="w-[200px] h-[267px] relative">

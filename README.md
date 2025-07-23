@@ -20,7 +20,13 @@
 
 ### 画面イメージ
 
-<!-- <img src="./docs/アニメ検索画面イメージ.png" height="500px"/> -->
+#### ホーム
+
+<img src="./docs/アニメ検索画面イメージ.png" height="500px"/>
+
+#### 作品詳細
+
+<img src="./docs/アニメ詳細.png" height="500px"/>
 
 ---
 
@@ -74,8 +80,6 @@
 このアプリでは、以下の API からアニメ情報を取得しています：
 
 - [Anilist GraphQL API](https://anilist.gitbook.io/anilist-apiv2-docs/)
-
-- [Annnict REST API](https://developers.annict.com/docs/rest-api/v1)
 
 ---
 
