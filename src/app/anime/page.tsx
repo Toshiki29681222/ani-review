@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FavoriteButton from "@/components/FavoriteButton";
+import { Bot, User, Search } from "lucide-react"; // アイコン追加
 
 type Anime = {
   id: number;
@@ -14,6 +15,10 @@ type Anime = {
 export default function Anime() {
   const [seasonalAnime, setSeasonalAnime] = useState<Anime[]>([]);
   const [popularAnime, setPopularAnime] = useState<Anime[]>([]);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiQuery, setAiQuery] = useState("");
+  const [aiResult, setAiResult] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState(""); // 通常検索用
 
   useEffect(() => {
     const fetchAnimeData = async () => {
@@ -22,25 +27,15 @@ export default function Anime() {
           seasonal: Page(perPage: 10) {
             media(season: SUMMER, seasonYear: 2025, type: ANIME, sort: POPULARITY_DESC) {
               id
-              title {
-                romaji
-                native
-              }
-              coverImage {
-                large
-              }
+              title { romaji native }
+              coverImage { large }
             }
           }
           popular: Page(perPage: 10) {
             media(sort: POPULARITY_DESC, type: ANIME) {
               id
-              title {
-                romaji
-                native
-              }
-              coverImage {
-                large
-              }
+              title { romaji native }
+              coverImage { large }
             }
           }
         }
@@ -67,6 +62,16 @@ export default function Anime() {
 
     fetchAnimeData();
   }, []);
+
+  const handleAiSearch = () => {
+    // TODO: 実際にはOpenAI API呼び出し
+    setAiResult(`「${aiQuery}」についてAIが検索した結果（モック表示）です。`);
+  };
+
+  const handleNormalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(`通常検索: ${searchQuery}`);
+  };
 
   const AnimeSection = ({
     title,
@@ -114,27 +119,85 @@ export default function Anime() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 md:px-6 py-8">
-      <div className="max-w-6xl mx-auto space-y-10">
-        {/* 検索セクション */}
-        <section className="space-y-4">
-          <h1 className="text-3xl font-bold text-gray-800">アニメ検索</h1>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+    <div className="min-h-screen bg-gray-50">
+      {/* ヘッダー */}
+      <header className="flex justify-between items-center px-6 py-4 bg-white shadow gap-4">
+        <h1 className="text-2xl font-bold text-gray-800">AniReview</h1>
+
+        <div className="flex items-center gap-4 ml-auto">
+          {/* 通常検索フォーム（右寄せ & アイコン付き） */}
+          <form onSubmit={handleNormalSearch} className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="アニメタイトル・スタッフ名で検索"
-              className="flex-1 h-10 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Type / to search"
+              className="w-64 h-10 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
-            <button className="h-10 px-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition">
-              検索
-            </button>
-          </div>
-        </section>
+          </form>
 
-        {/* アニメセクション */}
+          {/* AI検索 */}
+          <button
+            onClick={() => setAiOpen(true)}
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+            title="AIでアニメ検索"
+          >
+            <Bot className="w-6 h-6 text-purple-600" />
+          </button>
+
+          {/* マイページ */}
+          <Link
+            href="/mypage"
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+            title="マイページ"
+          >
+            <User className="w-6 h-6 text-gray-700" />
+          </Link>
+        </div>
+      </header>
+
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 space-y-10">
         <AnimeSection title="今季放送中のアニメ" animeList={seasonalAnime} />
         <AnimeSection title="今もなお人気なアニメ" animeList={popularAnime} />
       </div>
+
+      {/* AI検索モーダル */}
+      {aiOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-800">
+                AIでアニメ検索
+              </h2>
+              <button
+                onClick={() => setAiOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ×
+              </button>
+            </div>
+            <input
+              type="text"
+              value={aiQuery}
+              onChange={(e) => setAiQuery(e.target.value)}
+              placeholder="例：泣けるバトルアニメを教えて"
+              className="w-full h-10 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <button
+              onClick={handleAiSearch}
+              className="w-full h-10 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition"
+            >
+              検索
+            </button>
+            {aiResult && (
+              <div className="p-4 bg-gray-50 rounded-md text-gray-700">
+                {aiResult}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
