@@ -28,7 +28,9 @@
 
 <img src="./docs/アニメ詳細.png" height="500px"/>
 
----
+#### マイページ
+
+## <img src="./docs/マイページ画面イメージ.png" height="500px"/>
 
 ## 機能一覧
 

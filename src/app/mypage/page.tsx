@@ -29,24 +29,14 @@ export default function MyPage() {
 
   // 1つの配列にまとめて管理
   const [animeList, setAnimeList] = useState<AnimeItem[]>([
-    {
-      id: 1,
-      title: "鬼滅の刃",
-      coverImage: "/placeholder.jpg",
-      status: "unwatched",
-    },
+    { id: 1, title: "鬼滅の刃", coverImage: "", status: "unwatched" },
     {
       id: 2,
       title: "進撃の巨人",
       coverImage: "/placeholder.jpg",
       status: "watching",
     },
-    {
-      id: 3,
-      title: "呪術廻戦",
-      coverImage: "/placeholder.jpg",
-      status: "watching",
-    },
+    { id: 3, title: "呪術廻戦", coverImage: "", status: "watching" },
     {
       id: 4,
       title: "ブルーロック",
@@ -56,7 +46,7 @@ export default function MyPage() {
     {
       id: 5,
       title: "Re:ゼロから始める異世界生活",
-      coverImage: "/placeholder.jpg",
+      coverImage: "",
       status: "completed",
     },
     {
@@ -114,40 +104,51 @@ export default function MyPage() {
     activeTab === "all"
       ? animeList
       : animeList.filter((anime) => anime.status === activeTab);
-
   const renderAnimeList = (list: AnimeItem[]) => (
     <ul className="flex gap-4 overflow-x-auto">
-      {list.map((anime) => (
-        <li
-          key={anime.id}
-          className="w-[150px] relative group bg-white rounded-lg shadow hover:shadow-md transition"
-        >
-          <Link href={`/anime/${anime.id}`}>
-            <div className="w-full h-[200px] relative">
-              <Image
-                src={anime.coverImage}
-                alt={anime.title}
-                fill
-                className="object-cover rounded-t"
-              />
-            </div>
-            <div className="p-2 text-sm text-gray-800 line-clamp-1">
-              {anime.title}
-            </div>
-          </Link>
+      {list.map((anime) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [error, setError] = useState(false); // 画像読み込み失敗フラグ
 
-          {/* 削除ボタン（すべてタブのみ） */}
-          {activeTab === "all" && (
-            <button
-              onClick={() => handleRemove(anime.id)}
-              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
-              title="削除"
-            >
-              <X className="w-4 h-4 text-red-500" />
-            </button>
-          )}
-        </li>
-      ))}
+        return (
+          <li
+            key={anime.id}
+            className="w-[150px] relative group bg-white rounded-lg shadow hover:shadow-md transition"
+          >
+            <Link href={`/anime/${anime.id}`}>
+              <div className="w-full h-[200px] relative bg-black rounded-t flex items-center justify-center">
+                {!error && anime.coverImage ? (
+                  <Image
+                    src={anime.coverImage}
+                    alt={anime.title}
+                    fill
+                    className="object-cover rounded-t"
+                    onError={() => setError(true)} // 読み込み失敗時に黒背景表示へ
+                  />
+                ) : (
+                  <span className="text-white text-xs text-center px-1">
+                    {anime.title}
+                  </span>
+                )}
+              </div>
+              <div className="p-2 text-sm text-gray-800 line-clamp-1">
+                {anime.title}
+              </div>
+            </Link>
+
+            {/* 削除ボタン（すべてタブのみ） */}
+            {activeTab === "all" && (
+              <button
+                onClick={() => handleRemove(anime.id)}
+                className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+                title="削除"
+              >
+                <X className="w-4 h-4 text-red-500" />
+              </button>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 
@@ -188,13 +189,23 @@ export default function MyPage() {
       <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* プロフィール */}
         <section className="bg-white rounded-lg shadow p-6 flex items-center gap-6">
-          <div className="w-24 h-24 relative rounded-full overflow-hidden">
-            <Image
-              src={user.avatar}
-              alt={user.name}
-              fill
-              className="object-cover"
-            />
+          <div className="w-24 h-24 relative rounded-full overflow-hidden bg-black flex items-center justify-center">
+            {user.avatar ? (
+              <Image
+                src={user.avatar}
+                alt={user.name}
+                fill
+                className="object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none"; // エラー時に非表示
+                }}
+              />
+            ) : (
+              <span className="text-white text-sm text-center">
+                {user.name}
+              </span>
+            )}
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-800">{user.name}</h1>
