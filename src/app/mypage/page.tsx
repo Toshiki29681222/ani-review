@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Bot, User, Search } from "lucide-react";
+import { Bot, User, Search, X } from "lucide-react";
 
+type Status = "unwatched" | "watching" | "completed";
 type Review = {
   id: number;
   animeTitle: string;
@@ -12,10 +13,11 @@ type Review = {
   date: string;
 };
 
-type Favorite = {
+type AnimeItem = {
   id: number;
   title: string;
   coverImage: string;
+  status: Status;
 };
 
 export default function MyPage() {
@@ -25,32 +27,44 @@ export default function MyPage() {
     bio: "アニメが好きなフロントエンドエンジニアです。",
   });
 
-  const [favorites] = useState<Favorite[]>([
-    { id: 1, title: "鬼滅の刃", coverImage: "/placeholder.jpg" },
-    { id: 2, title: "進撃の巨人", coverImage: "/placeholder.jpg" },
-  ]);
-
-  const [watching] = useState<Favorite[]>([
-    { id: 3, title: "呪術廻戦", coverImage: "/placeholder.jpg" },
-    { id: 4, title: "ブルーロック", coverImage: "/placeholder.jpg" },
-  ]);
-
-  const [planned] = useState<Favorite[]>([
+  // 1つの配列にまとめて管理
+  const [animeList, setAnimeList] = useState<AnimeItem[]>([
+    {
+      id: 1,
+      title: "鬼滅の刃",
+      coverImage: "/placeholder.jpg",
+      status: "unwatched",
+    },
+    {
+      id: 2,
+      title: "進撃の巨人",
+      coverImage: "/placeholder.jpg",
+      status: "watching",
+    },
+    {
+      id: 3,
+      title: "呪術廻戦",
+      coverImage: "/placeholder.jpg",
+      status: "watching",
+    },
+    {
+      id: 4,
+      title: "ブルーロック",
+      coverImage: "/placeholder.jpg",
+      status: "unwatched",
+    },
     {
       id: 5,
       title: "Re:ゼロから始める異世界生活",
       coverImage: "/placeholder.jpg",
+      status: "completed",
     },
-    { id: 6, title: "魔法少女まどか☆マギカ", coverImage: "/placeholder.jpg" },
-  ]);
-
-  const [completed] = useState<Favorite[]>([
     {
-      id: 7,
-      title: "コードギアス 反逆のルルーシュ",
+      id: 6,
+      title: "魔法少女まどか☆マギカ",
       coverImage: "/placeholder.jpg",
+      status: "completed",
     },
-    { id: 8, title: "シュタインズ・ゲート", coverImage: "/placeholder.jpg" },
   ]);
 
   const [reviews] = useState<Review[]>([
@@ -69,8 +83,8 @@ export default function MyPage() {
   ]);
 
   const [activeTab, setActiveTab] = useState<
-    "favorites" | "watching" | "planned" | "completed"
-  >("favorites");
+    "all" | "unwatched" | "watching" | "completed"
+  >("all");
 
   // 検索・AIモーダル用
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,14 +101,28 @@ export default function MyPage() {
     setAiResult(`「${aiQuery}」についてAIが検索した結果（モック表示）です。`);
   };
 
-  const renderAnimeList = (list: Favorite[]) => (
+  /** 削除処理（確認ダイアログ付き、すべてタブでのみ削除可能） */
+  const handleRemove = (id: number) => {
+    const target = animeList.find((a) => a.id === id);
+    if (target && confirm(`「${target.title}」をリストから削除しますか？`)) {
+      setAnimeList((prev) => prev.filter((a) => a.id !== id));
+    }
+  };
+
+  /** 表示するアニメリスト */
+  const filteredList =
+    activeTab === "all"
+      ? animeList
+      : animeList.filter((anime) => anime.status === activeTab);
+
+  const renderAnimeList = (list: AnimeItem[]) => (
     <ul className="flex gap-4 overflow-x-auto">
       {list.map((anime) => (
-        <li key={anime.id} className="w-[150px]">
-          <Link
-            href={`/anime/${anime.id}`}
-            className="block bg-white rounded-lg shadow hover:shadow-md transition"
-          >
+        <li
+          key={anime.id}
+          className="w-[150px] relative group bg-white rounded-lg shadow hover:shadow-md transition"
+        >
+          <Link href={`/anime/${anime.id}`}>
             <div className="w-full h-[200px] relative">
               <Image
                 src={anime.coverImage}
@@ -107,6 +135,17 @@ export default function MyPage() {
               {anime.title}
             </div>
           </Link>
+
+          {/* 削除ボタン（すべてタブのみ） */}
+          {activeTab === "all" && (
+            <button
+              onClick={() => handleRemove(anime.id)}
+              className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-gray-100"
+              title="削除"
+            >
+              <X className="w-4 h-4 text-red-500" />
+            </button>
+          )}
         </li>
       ))}
     </ul>
@@ -117,7 +156,6 @@ export default function MyPage() {
       {/* ヘッダー */}
       <header className="flex justify-between items-center px-6 py-4 bg-white shadow gap-4">
         <h1 className="text-2xl font-bold text-gray-800">AniReview</h1>
-
         <div className="flex items-center gap-4 ml-auto">
           <form onSubmit={handleNormalSearch} className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -129,7 +167,6 @@ export default function MyPage() {
               className="w-64 h-10 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </form>
-
           <button
             onClick={() => setAiOpen(true)}
             className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -137,7 +174,6 @@ export default function MyPage() {
           >
             <Bot className="w-6 h-6 text-purple-600" />
           </button>
-
           <Link
             href="/mypage"
             className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -168,56 +204,30 @@ export default function MyPage() {
 
         {/* タブ切り替え */}
         <section>
-          <h2 className="text-xl font-bold text-gray-800 mb-4">マイリスト</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">お気に入り</h2>
           <div className="flex gap-4 border-b">
-            <button
-              onClick={() => setActiveTab("favorites")}
-              className={`pb-2 px-4 ${
-                activeTab === "favorites"
-                  ? "border-b-2 border-teal-500 text-teal-600"
-                  : "text-gray-600"
-              }`}
-            >
-              お気に入り
-            </button>
-            <button
-              onClick={() => setActiveTab("watching")}
-              className={`pb-2 px-4 ${
-                activeTab === "watching"
-                  ? "border-b-2 border-teal-500 text-teal-600"
-                  : "text-gray-600"
-              }`}
-            >
-              視聴中
-            </button>
-            <button
-              onClick={() => setActiveTab("planned")}
-              className={`pb-2 px-4 ${
-                activeTab === "planned"
-                  ? "border-b-2 border-teal-500 text-teal-600"
-                  : "text-gray-600"
-              }`}
-            >
-              視聴予定
-            </button>
-            <button
-              onClick={() => setActiveTab("completed")}
-              className={`pb-2 px-4 ${
-                activeTab === "completed"
-                  ? "border-b-2 border-teal-500 text-teal-600"
-                  : "text-gray-600"
-              }`}
-            >
-              視聴完了
-            </button>
+            {["all", "unwatched", "watching", "completed"].map((tab) => (
+              <button
+                key={tab}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onClick={() => setActiveTab(tab as any)}
+                className={`pb-2 px-4 ${
+                  activeTab === tab
+                    ? "border-b-2 border-teal-500 text-teal-600"
+                    : "text-gray-600"
+                }`}
+              >
+                {tab === "all"
+                  ? "すべて"
+                  : tab === "unwatched"
+                  ? "未視聴"
+                  : tab === "watching"
+                  ? "視聴中"
+                  : "視聴完了"}
+              </button>
+            ))}
           </div>
-
-          <div className="mt-6">
-            {activeTab === "favorites" && renderAnimeList(favorites)}
-            {activeTab === "watching" && renderAnimeList(watching)}
-            {activeTab === "planned" && renderAnimeList(planned)}
-            {activeTab === "completed" && renderAnimeList(completed)}
-          </div>
+          <div className="mt-6">{renderAnimeList(filteredList)}</div>
         </section>
 
         {/* レビュー履歴 */}
