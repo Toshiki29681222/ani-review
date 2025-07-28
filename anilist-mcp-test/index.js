@@ -39,21 +39,6 @@ async function searchNatural(query) {
     name: "search_anime",
     arguments: { filter, amount: 10 }, // term削除
   });
-  //   console.log(query);
-  //   const filter = {
-  //     genre: "Sports",
-  //     tag: null,
-  //     // seasonYear: 2020, // 必要なら年も指定
-  //     // tag: "Baseball",     // 必要ならタグも追加
-  //     // startDate_greater: 20200101, // 2020年以降ならこちら
-  //   };
-
-  //   console.log("Direct filter:", filter);
-
-  //   sendRpc("tools/call", {
-  //     name: "search_anime",
-  //     arguments: { filter, amount: 10 },
-  //   });
 }
 
 await searchNatural("2020年以降のアニメ");
