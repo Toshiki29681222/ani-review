@@ -35,6 +35,7 @@ let json = response.output_text.replace(/```json|```/g, "").trim();
 const params = JSON.parse(json); // { genre: "Sports", startDate_greater: 20200101 }
 
 // 2. GraphQLクエリを組み立て
+// OpenAIから受け取ったジャンルと開始日を変数に設定
 const gqlQuery = `
 query ($genre: String, $startDate: FuzzyDateInt) {
   Page(perPage: 5) {
@@ -42,8 +43,6 @@ query ($genre: String, $startDate: FuzzyDateInt) {
       id
       title {
         romaji
-        english
-        native
       }
       seasonYear
       genres
@@ -51,7 +50,7 @@ query ($genre: String, $startDate: FuzzyDateInt) {
   }
 }`;
 
-// 3. AniList API を叩く
+// AniList API を叩く
 const res = await fetch("https://graphql.anilist.co", {
   method: "POST",
   headers: { "Content-Type": "application/json" },

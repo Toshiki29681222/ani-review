@@ -1,7 +1,7 @@
-# OpenAI × AniList API × MCP サーバで自然文アニメ検索を作ってみた
+# OpenAI × AniList API でアニメ検索する
 
 こんにちは。
-今回は自分が作っているアプリで\*\*「2020 年以降のスポーツアニメ」\*\*のような自然文検索ができるようにしたいと思い、その過程を記事にまとめます。
+今回は自分が作っているアプリで\*\*「2020 年以降のスポーツアニメ」\*\*のような 自然文で検索ができるようにしたいと思い、データが取得できるまでを記事にまとめます。
 
 ---
 
@@ -9,55 +9,41 @@
 
 - **ユーザーが自然文で検索**
   例：「2020 年以降のスポーツアニメ」
-- **OpenAI で自然文をパラメータ化**
+- **OpenAI で自然文をパラメータ分割**
   → JSON 形式でジャンルや年月に分割
 - **AniList API から該当作品を取得**
-  → 有志の方が作ってくださった MCP サーバを活用
-
-> もし MCP サーバがなければ、OpenAI に直接 GraphQL クエリを作らせる必要がありましたが、ありがたいことに有志の方が **AniList API 用 MCP サーバ** を公開してくださっていたので活用します。感謝です…！
-
-MCP サーバを触るのは今回が初めてなので、その体験記も含めてまとめます。
+  → GraphQL でリクエスト
 
 ---
 
-## 実装の流れ
+## フロー図
 
-1. **クライアントから自然文を OpenAI に送信**
-   → 「ジャンル」「開始年月」などのパラメータを JSON で生成してもらう
-2. **返ってきた JSON をもとに MCP サーバへリクエスト**
-   → AniList API で該当作品を検索
-3. **結果をクライアントで受け取る**
-
-フロー図：
-
-```
-AI クライアント → OpenAI → AI クライアント → AniList MCP サーバ → AniList API → MCP → AI クライアント
-```
+<img src="./openai + anilist apiを使ってAI検索を実装する.png">
 
 ---
 
-## OpenAI API キーの準備
+## 1. OpenAI API キーの準備
 
 まずは OpenAI API キーを取得します。
 
-1. [OpenAI の管理画面](https://platform.openai.com/)にアクセス
+1. [OpenAI の管理画面](https://platform.openai.com/api-keys)にアクセス
 2. \*\*「API キーを作成」\*\*をクリック
-   → **注意**：API キーは再表示できないので必ずメモしておく
+   → **注意**：API キーは再表示できないのでメモしておく
 
 > 私はメモを忘れてしまい、作り直しました 😓
 
-また、無料ではエラーが出るため、利用には課金が必要です。
-テスト用なので、私は最低額の **5 ドル** をチャージしました。
+また、利用には課金が必要です。
+テスト用なので、私は最低額の 5 ドルだけをチャージしました。
 
 ---
 
-## プロジェクトの作成
+## 2.プロジェクトの作成
 
 テスト用のディレクトリを作ります：
 
 ```console
-mkdir anilist-mcp-test
-cd anilist-mcp-test
+mkdir openai-anilist-test
+cd openai-anilist-test
 ```
 
 ライブラリをインストールします：
@@ -69,11 +55,9 @@ npm install dotenv
 
 ---
 
-## OpenAI に自然文 → JSON 変換を依頼する
+## 3.処理実装 <br>(OpenAI による自然文変換から AniListAPI クエリ送信まで)
 
-まずは **OpenAI に自然文を渡して JSON で返してもらう**部分を書きます。
-
-### index.js
+\*\*OpenAI に自然文を渡して JSON で返してもらい、取得した情報で AniListAPI へアクセスします。
 
 ````javascript
 // index.js
@@ -115,6 +99,7 @@ let json = response.output_text.replace(/```json|```/g, "").trim();
 const params = JSON.parse(json); // { genre: "Sports", startDate_greater: 20200101 }
 
 // 2. GraphQLクエリを組み立て
+// OpenAIから受け取ったジャンルと開始日を変数に設定
 const gqlQuery = `
 query ($genre: String, $startDate: FuzzyDateInt) {
   Page(perPage: 5) {
@@ -161,30 +146,21 @@ node index.js
 
 返ってきた結果：
 
-```json
-{
-  "genre": "Sports",
-  "startDate_greater": 20200101
-}
+```console
+=== Search Results ===
+Haikyuu!! TO THE TOP (2020)
+Blue Lock (2022)
+Haikyuu!! TO THE TOP 2 (2020)
+SK∞ (2021)
+Haikyuu!! Riku VS Kuu (2020)
 ```
 
-**成功！**
-自然文がきれいな検索パラメータになりました。
-
----
-
-## AniList API で検索
-
-最後に、この JSON を使って **AniList API から該当アニメを取得**します。
-有志の方が **型チェック付きの MCP サーバ**を公開してくださっているので、そちらを活用します。
-https://github.com/yuna0x0/anilist-mcp?tab=readme-ov-file
+取得できました！
 
 ---
 
 ### まとめ
 
-- **自然文 → JSON** の変換は OpenAI に任せる
-- **AniList API へのリクエストは MCP サーバで簡単化**
-- **英語プロンプト**を使うことで精度が向上
-
----
+OpenAI に細かく指示を出すことで、パラメータをうまく抽出できるようになりました。
+ただ現状だとジャンルと開始日でしか検索できません。
+そのため、OpenAI への命令内容の強化と動的な GraphQL クエリの組み立てが今後の課題になると思っています。
