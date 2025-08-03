@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="akcRhPtNDlfc5swv-VdI" name="Page-1">
-        <mxGraphModel dx="1454" dy="851" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="1344" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -42,7 +42,7 @@
                 <mxCell id="16" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;外部API&lt;/b&gt;&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
                     <mxGeometry x="360" y="460" width="60" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="19" value="&lt;b&gt;Anilist API(GraphQL) Annict API(REST)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="19" value="&lt;b&gt;Anilist API(GraphQL)&amp;nbsp;&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="375" y="497.5" width="125" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Prisma&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
