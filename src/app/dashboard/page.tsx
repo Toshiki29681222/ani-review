@@ -53,49 +53,51 @@ export default function DashboardPage() {
         <p>平均評価: ★★★★☆ (4.2)</p>
       </div>
 
-      {/* タグ別レビュー集計 */}
-      <div className="bg-white p-4 rounded-md shadow">
-        <h2 className="text-xl font-semibold mb-4">よく使ったタグ</h2>
-        <BarChart width={500} height={300} data={tagData}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="count" fill="#8884d8" />
-        </BarChart>
-      </div>
+      <div className="flex flex-wrap gap-4">
+        {/* タグ別レビュー集計 */}
+        <div className="bg-white p-4 rounded-md shadow">
+          <h2 className="text-xl font-semibold mb-4">よく使ったタグ</h2>
+          <BarChart width={500} height={300} data={tagData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#8884d8" />
+          </BarChart>
+        </div>
 
-      {/* 制作会社別視聴割合 */}
-      <div className="bg-white p-4 rounded-md shadow">
-        <h2 className="text-xl font-semibold mb-4">制作会社別視聴割合</h2>
-        <PieChart width={400} height={300}>
-          <Pie
-            data={studioData}
-            dataKey="value"
-            cx="50%"
-            cy="50%"
-            outerRadius={100}
-            label
-          >
-            {studioData.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-      </div>
+        {/* 制作会社別視聴割合 */}
+        <div className="bg-white p-4 rounded-md shadow">
+          <h2 className="text-xl font-semibold mb-4">制作会社別視聴割合</h2>
+          <PieChart width={400} height={300}>
+            <Pie
+              data={studioData}
+              dataKey="value"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label
+            >
+              {studioData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
 
-      {/* 評価分布 */}
-      <div className="bg-white p-4 rounded-md shadow">
-        <h2 className="text-xl font-semibold mb-4">評価分布</h2>
-        <BarChart width={500} height={300} data={ratingData}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="count" fill="#82ca9d" />
-        </BarChart>
+        {/* 評価分布 */}
+        <div className="bg-white p-4 rounded-md shadow">
+          <h2 className="text-xl font-semibold mb-4">評価分布</h2>
+          <BarChart width={500} height={300} data={ratingData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#82ca9d" />
+          </BarChart>
+        </div>
       </div>
 
       {/* AIサマリー */}
