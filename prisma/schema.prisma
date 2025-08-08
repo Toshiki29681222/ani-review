@@ -9,8 +9,43 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  email     String   @unique
-  name      String?
+  id       String     @id @default(cuid())
+  name     String
+  email    String     @unique
+  reviews  AnimeReview[]
+}
+
+model Anime {
+  id          String        @id           // AnilistなどのIDをそのまま使う
+  title       String
+  coverImage  String?
+  description String?
+  reviews     AnimeReview[]
+}
+
+model AnimeReview {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  animeId   String
+  rating    Int      // 1〜5の評価
+  comment   String   // 感想本文
+  viewedAt  DateTime
+  tags      ReviewTag[] // タグ（任意）
+}
+
+model Tag {
+  id     String       @id @default(cuid())
+  name   String       @unique
+  reviews ReviewTag[]
+}
+
+model ReviewTag {
+  review   AnimeReview @relation(fields: [reviewId], references: [id])
+  reviewId String
+  tag      Tag         @relation(fields: [tagId], references: [id])
+  tagId    String
+
+  @@id([reviewId, tagId])
 }
