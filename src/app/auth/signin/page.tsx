@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +28,17 @@ export default function Login() {
 
       if (response.ok) {
         console.log("Login successful");
-        alert("ログインが成功しました！");
-
-        // TODO: 適切なページにリダイレクト
-        // 一時的にトークンをコンソールに表示（実際のアプリでは使用しない）
         console.log("Auth token:", data.token);
         console.log("User info:", data.user);
+        
+        // JWTトークンとユーザー情報をローカルストレージに保存
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        // 例: ダッシュボードにリダイレクト
-        // window.location.href = '/dashboard'
+        alert("ログインが成功しました！");
+
+        // プロフィールページにリダイレクト
+        router.push("/profile");
       } else {
         console.error("Login failed:", data);
         alert(`ログインエラー: ${data.error || "Unknown error"}`);

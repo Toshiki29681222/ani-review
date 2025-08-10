@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 interface User {
@@ -77,21 +78,29 @@ export default function ProfilePage() {
   const [monthlyStats, setMonthlyStats] = useState<MonthlyStats[]>([])
   const [studioStats, setStudioStats] = useState<StudioStats[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    fetchUserProfile()
-  }, [])
+    const checkAuthAndFetchProfile = async () => {
+      try {
+        // ローカルストレージから認証情報を確認
+        const token = localStorage.getItem('authToken')
+        const storedUser = localStorage.getItem('user')
 
-  const fetchUserProfile = async () => {
-    try {
-      // ダミーデータ（後で実際のAPIに置き換え）
-      setTimeout(() => {
-        setUser({
-          id: 'user-123',
-          name: '田中太郎',
-          email: 'tanaka@example.com',
-          createdAt: '2024-03-15T00:00:00Z'
-        })
+        if (!token || !storedUser) {
+          // 認証情報がない場合はログイン画面にリダイレクト
+          router.push('/auth/signin')
+          return
+        }
+
+        // ローカルストレージからユーザー情報を復元
+        const parsedUser = JSON.parse(storedUser)
+        setUser(parsedUser)
+        setIsAuthenticated(true)
+
+        // プロフィール情報を取得（ダミーデータ）
+        setTimeout(() => {
         
         setStats({
           totalReviews: 24,
@@ -223,8 +232,25 @@ export default function ProfilePage() {
       }, 500)
     } catch (error) {
       console.error('Failed to fetch user profile:', error)
-      setIsLoading(false)
+      // 認証エラーの場合もログイン画面にリダイレクト
+      router.push('/auth/signin')
     }
+  }
+
+  checkAuthAndFetchProfile()
+}, [router])
+
+  const handleLogout = () => {
+    // ローカルストレージからトークンとユーザー情報を削除
+    localStorage.removeItem('authToken')
+    localStorage.removeItem('user')
+    
+    // 状態をリセット
+    setUser(null)
+    setIsAuthenticated(false)
+    
+    // ログイン画面にリダイレクト
+    router.push('/auth/signin')
   }
 
   if (isLoading) {
@@ -235,7 +261,8 @@ export default function ProfilePage() {
     )
   }
 
-  if (!user) {
+  if (!user || !isAuthenticated) {
+    // 認証チェック中、または未認証の場合
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -243,7 +270,7 @@ export default function ProfilePage() {
             ログインが必要です
           </h1>
           <Link 
-            href="/auth/login" 
+            href="/auth/signin" 
             className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
             ログインする
@@ -267,10 +294,18 @@ export default function ProfilePage() {
                 登録日: {new Date(user.createdAt).toLocaleDateString('ja-JP')}
               </p>
             </div>
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold text-white">
-                {user.name.charAt(0)}
-              </span>
+            <div className="flex items-center space-x-4">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">
+                  {user.name.charAt(0)}
+                </span>
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                ログアウト
+              </button>
             </div>
           </div>
         </div>
