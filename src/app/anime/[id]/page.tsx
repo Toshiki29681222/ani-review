@@ -42,11 +42,6 @@ export default function AnimeDetailPage({
       return;
     }
 
-    console.log("Review submitted:", reviewForm);
-
-    const userId = "123"; // 仮のユーザーID
-    const animeId = anime.id; // 現在のアニメID
-
     setIsReviewDialogOpen(false);
     setReviewForm({
       comment: "",
