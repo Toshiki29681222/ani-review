@@ -1,61 +1,44 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react"; // アイコンを使う場合
 
-const navLinks = [
-  { label: "ホーム", href: "/" },
-  { label: "アニメ一覧", href: "/anime" },
-  { label: "お気に入り", href: "/favorites" },
-];
+import { Bot, User, Search } from "lucide-react"; // アイコン追加
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
-    <header className="bg-gray-100 shadow-md">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        {/* ロゴ */}
-        <div className="text-lg font-bold">アニメ感想ログ</div>
+    <header className="flex justify-between items-center px-6 py-4 bg-white shadow gap-4">
+      <h1 className="text-2xl font-bold text-gray-800">AniReview</h1>
 
-        {/* ハンバーガーアイコン（モバイル） */}
+      <div className="flex items-center gap-4 ml-auto">
+        <form onSubmit={() => {}} className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            value={""}
+            onChange={() => {}}
+            placeholder="タイトルで検索"
+            className="w-64 h-10 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </form>
+
+        {/* AI検索 */}
         <button
-          className="md:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="メニューを開く"
+          onClick={() => {}}
+          className="p-2 rounded-full hover:bg-gray-100 transition"
+          title="AIでアニメ検索"
         >
-          {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <Bot className="w-6 h-6 text-purple-600" />
         </button>
 
-        {/* ナビゲーション（PC表示） */}
-        <nav className="hidden md:flex space-x-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm hover:underline"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        {/* マイページ */}
+        <Link
+          href="/profile"
+          className="p-2 rounded-full hover:bg-gray-100 transition"
+          title="マイページ"
+        >
+          <User className="w-6 h-6 text-gray-700" />
+        </Link>
       </div>
-
-      {/* モバイル用メニュー */}
-      {menuOpen && (
-        <nav className="md:hidden px-4 pb-4 space-y-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="block text-sm hover:underline"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      )}
     </header>
   );
 }
